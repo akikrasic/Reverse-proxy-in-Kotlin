@@ -24,11 +24,12 @@ class Forma :JFrame() {
         val velicinaEkrana = toolkit.screenSize
         setSize(velicinaEkrana.width, velicinaEkrana.height)
     }
+
     init{
         tabela.model = modelTabele
         tabela.autoCreateColumnsFromModel = true
-        osnovneOperacije()
         isVisible = true
+        osnovneOperacije()
         val layout = GridBagLayout()
         this.contentPane.layout = layout
         val c = GridBagConstraints()
