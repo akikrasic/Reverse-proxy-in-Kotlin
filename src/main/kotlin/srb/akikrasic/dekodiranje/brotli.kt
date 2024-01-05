@@ -26,7 +26,7 @@ open class D:C(){
 }
 fun main(){
     println(BrotliLoader.isBrotliAvailable())
-val enkr = Encoder.compress(" Kosmet Srbija ".toByteArray())
+val enkr = Encoder.compress(" Космет Србија гсдфгг г дфгфгдс фгфд гдфгдф г г дсфгдсф дг дфсгдсфг дфсг дфгдфсг дфгдг дфг дфг дсфг дфг фг дгсфг дсг сдг сдфг сдг сдфг сдфг дсфг ".toByteArray())
     val dekr = Decoder.decompress(enkr)
     println(String(dekr))
 println(String(enkr))

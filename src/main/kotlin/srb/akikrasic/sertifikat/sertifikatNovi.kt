@@ -57,10 +57,10 @@ fun imeIzgradjivac(zemlja:String, lokacija:String, cn:String,org:String, orgJed:
 }
 val provider = "BCFIPS"
 fun generisanjeSertifikata(dnsName:String):KeyStore{
-    val tip = "RSA"
-    val algoritamPotpis = "SHA256withRSA"
+    val tip = "RSA"// "RSA"
+    val algoritamPotpis ="SHA256withRSA" //menjano oktobar 2023
     val kpg = KeyPairGenerator.getInstance(tip,provider )
-    kpg.initialize(2048)
+    kpg.initialize(2048)//
     val kp = kpg.generateKeyPair()
     val ser = BigInteger.valueOf(System.currentTimeMillis())
     val sad = Instant.now()
