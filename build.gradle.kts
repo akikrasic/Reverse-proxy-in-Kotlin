@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.9.10"
 }
 
 group = "srb.aki"
@@ -16,9 +16,12 @@ repositories {
 }
 
 dependencies {
-    implementation(group="org.bouncycastle", name= "bcpkix-fips", version= "1.0.5")
-    implementation( group= "org.bouncycastle", name= "bctls-fips", version= "1.0.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+    implementation("org.bouncycastle:bcpkix-fips:1.0.7")
+    implementation("org.bouncycastle:bctls-fips:1.0.17")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.apache.commons:commons-compress:1.21")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli:0.2.0")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli-linux-x86-amd64:0.2.0")
@@ -36,15 +39,15 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "17"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "17"
 }
 
 
