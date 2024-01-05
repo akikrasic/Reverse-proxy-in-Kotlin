@@ -24,7 +24,6 @@ class Forma :JFrame() {
         val velicinaEkrana = toolkit.screenSize
         setSize(velicinaEkrana.width, velicinaEkrana.height)
     }
-
     init{
         tabela.model = modelTabele
         tabela.autoCreateColumnsFromModel = true
