@@ -308,6 +308,8 @@ fun napraviteOdgovor(bajtovi:ByteArray): Odgovor {
     }
 
 }
+//ta metoda treba da se obrise samo cu da ubacim ovo s dekoderi pa cu posle da vidim sta treba sta ne treba da se brise
+val radSaDekoderima = RadSaDekoderima()
 suspend fun ucitavanjeIUpisivanje(inp:InputStream, out:OutputStream, id:Int, tip:Int){
     if(tip==1){
         try{
@@ -318,7 +320,7 @@ suspend fun ucitavanjeIUpisivanje(inp:InputStream, out:OutputStream, id:Int, tip
             }
             val odgovor = napraviteOdgovor(ucitaniBajtovi)
             val tipEnkondinga = odgovor.headeri.getOrDefault("Content-Encoding", "").trim()
-            val dekoder = RadSaDekoderima.vratiteDekoder(tipEnkondinga)
+            val dekoder = radSaDekoderima.vratiteDekoder(tipEnkondinga)
             kanalZaKomunikaciju.send(ObradaZahtevaIliOdgovora(id, tip, ucitaniBajtovi, dekoder))
             kanalZaKomunikaciju.send(ObradaZahtevaIliOdgovora(id, tip, ucitaniBajtovi, dekoder))
             GlobalScope.launch(Dispatchers.IO){
@@ -333,7 +335,7 @@ suspend fun ucitavanjeIUpisivanje(inp:InputStream, out:OutputStream, id:Int, tip
         }
     }
     else{
-        ucitavanjeIUpisivanjeSamo(inp, out, id,tip, RadSaDekoderima.prazanDekoder)
+        ucitavanjeIUpisivanjeSamo(inp, out, id,tip, radSaDekoderima.prazanDekoder)
     }
 }
 suspend fun dodavanjeUMapuIProveraDaLiDaSeStampa(id:Int, bajtovi:ByteArray, dekoder:Dekoder){
@@ -439,21 +441,21 @@ fun sabiranjeOdgovora(id:Int):ByteArray{
             val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
             ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
             val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
-            val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
+         //   val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
           //  println("hederi zahteva  ${zahtev.hederi.mapaOriginalnihHedera}")
            // println("telo zahteva je ${url} : ${String(dekoder.dekodujte(zahtev.telo))}")
            // Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(zahtev.url,String(dekoder.dekodujte(zahtev.telo)) ))
-            Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev.url, zahtev.metoda, zahtev.hederi,String(dekoder.dekodujte(zahtev.telo)) ))
+          //  Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev.url, zahtev.metoda, zahtev.hederi,String(dekoder.dekodujte(zahtev.telo)) ))
 
 
             val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
             ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
             val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
-            val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
+            //val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
          //   println("hederi odgovor ${odgovor.hederi.mapaOriginalnihHedera}")
 
          //   println("telo odgovora je ${url} ${String(dekoderOdgovor.dekodujte(odgovor.telo))}")
-            Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev.url, zahtev.metoda, odgovor.hederi,String(dekoder.dekodujte(odgovor.telo)) ))
+            Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor ))
 
         }
 
@@ -468,14 +470,14 @@ suspend fun ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(browserInput:InputStream, b
             val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
             ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
             val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
-            val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
+           // val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
          //   println("telo odgovora je ${String(dekoderOdgovor.dekodujte(odgovor.telo))}")
 
 
             val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
             ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
             val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
-            val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
+          //  val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
          //   println("telo zahteva je : ${String(dekoder.dekodujte(zahtev.telo))}")
 
             brojac++

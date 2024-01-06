@@ -17,12 +17,14 @@ class ModelTabele:AbstractTableModel() {
         when(columnIndex){
 
             0->listaSvih[rowIndex].host
-            1->listaSvih[rowIndex].url
-            2->listaSvih[rowIndex].metoda
+            1->listaSvih[rowIndex].zahtev.url
+            2->listaSvih[rowIndex].zahtev.metoda
             else->""
         }
     fun dodajte( k:KomunikacijaPodaci){
         listaSvih.add(k)
     }
-    fun napraviteStringZaPrikazUTextArei(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdKomunikacije(listaSvih[indeks])
+    fun napraviteStringZaPrikazUTextAreiOdgovor(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdOdgovora(listaSvih[indeks])
+    fun napraviteStringZaPrikazUTextAreiZahtev(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdZahteva(listaSvih[indeks])
+
 }

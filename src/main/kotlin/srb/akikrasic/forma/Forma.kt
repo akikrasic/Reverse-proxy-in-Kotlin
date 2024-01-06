@@ -17,7 +17,9 @@ class Forma :JFrame() {
 
     val unosTeksta = UnosTekstaZaPretraguPanel(this)
     val tabela = JTable()
-    val area = JTextArea()
+    val areaZahtev = JTextArea()
+    val areaOdgovor = JTextArea()
+    val tabbedPane = JTabbedPane()
     val modelTabele = ModelTabele()
     private fun osnovneOperacije(){
         this.defaultCloseOperation=JFrame.EXIT_ON_CLOSE
@@ -26,6 +28,9 @@ class Forma :JFrame() {
     }
 
     init{
+
+        tabbedPane.addTab("Захтев", JScrollPane(areaZahtev))
+        tabbedPane.addTab("Одговор",JScrollPane(areaOdgovor))
         tabela.model = modelTabele
         tabela.autoCreateColumnsFromModel = true
         isVisible = true
@@ -52,7 +57,7 @@ class Forma :JFrame() {
         c.weighty= 0.95
         c.weightx = 0.5
         c.fill = GridBagConstraints.BOTH
-        contentPane.add(JScrollPane(area), c)
+        contentPane.add(tabbedPane, c)
         GlobalScope.launch (Dispatchers.Default){
             while(true){
                 dodajteUFormu(Komunikacija.kanalZaKomunikaciju.receive())
@@ -61,7 +66,10 @@ class Forma :JFrame() {
         tabela.addMouseListener( object: MouseListener {
             override fun mouseClicked(e: MouseEvent?) {
                     if ( e!!.clickCount==2){
-                        area.text= modelTabele.napraviteStringZaPrikazUTextArei(tabela.selectedRow)
+                        val red = tabela.selectedRow
+                        areaZahtev.text =modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
+                        areaOdgovor.text= modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
+
                     }
             }
 
