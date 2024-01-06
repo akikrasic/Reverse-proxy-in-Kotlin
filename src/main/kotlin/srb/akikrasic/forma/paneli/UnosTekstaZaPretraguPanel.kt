@@ -1,5 +1,6 @@
 package srb.akikrasic.forma.paneli
 
+import srb.akikrasic.forma.Forma
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -7,7 +8,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class UnosTekstaZaPretraguPanel : JPanel() {
+class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
 
     val labela = JLabel("Претрага")
     val polje = JTextField()

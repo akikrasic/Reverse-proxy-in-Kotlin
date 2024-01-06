@@ -12,11 +12,10 @@ import java.awt.Insets
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.*
-import javax.swing.table.DefaultTableModel
 
 class Forma :JFrame() {
 
-    val unosTeksta = UnosTekstaZaPretraguPanel()
+    val unosTeksta = UnosTekstaZaPretraguPanel(this)
     val tabela = JTable()
     val area = JTextArea()
     val modelTabele = ModelTabele()
@@ -62,11 +61,7 @@ class Forma :JFrame() {
         tabela.addMouseListener( object: MouseListener {
             override fun mouseClicked(e: MouseEvent?) {
                     if ( e!!.clickCount==2){
-                        val sb = StringBuilder()
-                        val k = modelTabele.lista[tabela.selectedRow]//mora lepse!!!
-                        k.hederi.mapaOriginalnihHedera.forEach { k, v-> sb.append(k).append(": ").append(v).append("\n") }
-                        sb.append("\n").append(k.poruka)
-                        area.text=sb.toString()
+                        area.text= modelTabele.napraviteStringZaPrikazUTextArei(tabela.selectedRow)
                     }
             }
 
