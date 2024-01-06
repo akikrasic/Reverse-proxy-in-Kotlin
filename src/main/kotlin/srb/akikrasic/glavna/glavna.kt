@@ -759,41 +759,41 @@ fun main(args:Array<String>) {
             SwingUtilities.invokeLater{
                 Forma()
             }
-            val i = AtomicInteger(0)
-
-            Security.addProvider(BouncyCastleJsseProvider())
-            Security.addProvider(BouncyCastleFipsProvider())
-            val server = ServerSocket(port)
-            GlobalScope.launch(Dispatchers.IO) {
-                try {
-                    obradaPoruke()
-                }
-                catch(e:Exception){
-                    println("greska uvacena u obradu poruke")
-                    e.printStackTrace()
-                }
-
-            }
-            GlobalScope.launch(Dispatchers.IO) {
-                stampanje()
-            }
-
-            GlobalScope.launch(Dispatchers.IO){
-                stampanjeUFajl()
-            }
-
-
-            while (true) {
-                val s = server.accept()
-              /*NOSONAR*/  GlobalScope.launch(Dispatchers.IO) {
-                    try {
-                        obradaSoketa2(s)
-                    }catch(e:Exception){
-                        println("greska uvacena u soket")
-                        e.printStackTrace()
-                    }
-                }
-            }
+//            val i = AtomicInteger(0)
+//
+//            Security.addProvider(BouncyCastleJsseProvider())
+//            Security.addProvider(BouncyCastleFipsProvider())
+//            val server = ServerSocket(port)
+//            GlobalScope.launch(Dispatchers.IO) {
+//                try {
+//                    obradaPoruke()
+//                }
+//                catch(e:Exception){
+//                    println("greska uvacena u obradu poruke")
+//                    e.printStackTrace()
+//                }
+//
+//            }
+//            GlobalScope.launch(Dispatchers.IO) {
+//                stampanje()
+//            }
+//
+//            GlobalScope.launch(Dispatchers.IO){
+//                stampanjeUFajl()
+//            }
+//
+//
+//            while (true) {
+//                val s = server.accept()
+//              /*NOSONAR*/  GlobalScope.launch(Dispatchers.IO) {
+//                    try {
+//                        obradaSoketa2(s)
+//                    }catch(e:Exception){
+//                        println("greska uvacena u soket")
+//                        e.printStackTrace()
+//                    }
+//                }
+//            }
 
 
 

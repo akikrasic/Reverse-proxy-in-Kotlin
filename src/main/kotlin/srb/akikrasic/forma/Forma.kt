@@ -3,6 +3,7 @@ package srb.akikrasic.forma
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import srb.akikrasic.forma.paneli.UnosTekstaZaPretraguPanel
 import srb.akikrasic.komunikacija.Komunikacija
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import java.awt.GridBagConstraints
@@ -15,7 +16,7 @@ import javax.swing.table.DefaultTableModel
 
 class Forma :JFrame() {
 
-    val polje =  JTextField()
+    val unosTeksta = UnosTekstaZaPretraguPanel()
     val tabela = JTable()
     val area = JTextArea()
     val modelTabele = ModelTabele()
@@ -36,10 +37,11 @@ class Forma :JFrame() {
         c.gridx = 0
         c.gridy = 0
         c.weighty = 0.05
-        c.weightx=0.5
+        c.weightx=0.3
         c.insets = Insets(10,10,10,10)
         c.fill =GridBagConstraints.BOTH
-        contentPane.add(polje, c)
+        c.anchor = GridBagConstraints.CENTER
+        contentPane.add(unosTeksta, c)
         c.gridy = 1
         c.weighty= 0.95
         c.weightx = 0.5
