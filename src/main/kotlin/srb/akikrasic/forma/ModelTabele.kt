@@ -1,13 +1,13 @@
 package srb.akikrasic.forma
 
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
-import srb.akikrasic.ucitavanjezahtevaiodgovora.ZajednickoZaZahtevIOdgovor
 import javax.swing.table.AbstractTableModel
 
 class ModelTabele:AbstractTableModel() {
     val kolone = arrayOf("Host", "URL", "Metoda")
-    val lista = mutableListOf<KomunikacijaPodaci>()
-    override fun getRowCount(): Int  = lista.size
+    val listaSvih = mutableListOf<KomunikacijaPodaci>()
+    val pravljenjeStringaZaPrikazUTekstArei = PravljenjeStringaZaPrikazUTekstArei()
+    override fun getRowCount(): Int  = listaSvih.size
 
     override fun getColumnCount(): Int = kolone.size
 
@@ -16,12 +16,13 @@ class ModelTabele:AbstractTableModel() {
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any   =
         when(columnIndex){
 
-            0->lista[rowIndex].host
-            1->lista[rowIndex].url
-            2->lista[rowIndex].metoda
+            0->listaSvih[rowIndex].host
+            1->listaSvih[rowIndex].url
+            2->listaSvih[rowIndex].metoda
             else->""
         }
     fun dodajte( k:KomunikacijaPodaci){
-        lista.add(k)
+        listaSvih.add(k)
     }
+    fun napraviteStringZaPrikazUTextArei(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdKomunikacije(listaSvih[indeks])
 }
