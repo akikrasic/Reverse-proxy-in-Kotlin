@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.*
 
-class Forma :JFrame() {
+class Forma : JFrame() {
 
     val unosTeksta = UnosTekstaZaPretraguPanel(this)
     val tabela = JTable()
@@ -21,16 +21,16 @@ class Forma :JFrame() {
     val areaOdgovor = JTextArea()
     val tabbedPane = JTabbedPane()
     val modelTabele = ModelTabele()
-    private fun osnovneOperacije(){
-        this.defaultCloseOperation=JFrame.EXIT_ON_CLOSE
+    private fun osnovneOperacije() {
+        this.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         val velicinaEkrana = toolkit.screenSize
         setSize(velicinaEkrana.width, velicinaEkrana.height)
     }
 
-    init{
+    init {
 
         tabbedPane.addTab("Захтев", JScrollPane(areaZahtev))
-        tabbedPane.addTab("Одговор",JScrollPane(areaOdgovor))
+        tabbedPane.addTab("Одговор", JScrollPane(areaOdgovor))
         tabela.model = modelTabele
         tabela.autoCreateColumnsFromModel = true
         isVisible = true
@@ -41,36 +41,35 @@ class Forma :JFrame() {
         c.gridx = 0
         c.gridy = 0
         c.weighty = 0.05
-        c.weightx=0.3
-        c.insets = Insets(10,10,10,10)
-        c.fill =GridBagConstraints.BOTH
+        c.weightx = 0.3
+        c.insets = Insets(10, 10, 10, 10)
+        c.fill = GridBagConstraints.BOTH
         c.anchor = GridBagConstraints.CENTER
         contentPane.add(unosTeksta, c)
         c.gridy = 1
-        c.weighty= 0.95
+        c.weighty = 0.95
         c.weightx = 0.5
         c.fill = GridBagConstraints.BOTH
         contentPane.add(JScrollPane(tabela), c)
 
         c.gridy = 1
         c.gridx = 1
-        c.weighty= 0.95
+        c.weighty = 0.95
         c.weightx = 0.5
         c.fill = GridBagConstraints.BOTH
         contentPane.add(tabbedPane, c)
-        GlobalScope.launch (Dispatchers.Default){
-            while(true){
+        GlobalScope.launch(Dispatchers.Default) {
+            while (true) {
                 dodajteUFormu(Komunikacija.kanalZaKomunikaciju.receive())
             }
         }
-        tabela.addMouseListener( object: MouseListener {
+        tabela.addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent?) {
-                    if ( e!!.clickCount==2){
-                        val red = tabela.selectedRow
-                        areaZahtev.text =modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
-                        areaOdgovor.text= modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
-
-                    }
+                if (e!!.clickCount == 2) {
+                    val red = tabela.selectedRow
+                    areaZahtev.text = modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
+                    areaOdgovor.text = modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
+                }
             }
 
             override fun mousePressed(e: MouseEvent?) {
@@ -88,12 +87,32 @@ class Forma :JFrame() {
         })
     }
 
-    fun dodajteUFormu(k:KomunikacijaPodaci){
-        SwingUtilities.invokeLater{
+    fun dodajteUFormu(k: KomunikacijaPodaci) {
+        GlobalScope.launch(Dispatchers.Default) {
+
             modelTabele.dodajte(k)
-            tabela.model = modelTabele
-            modelTabele.fireTableDataChanged()
+            osvezavanjeTabele()
+
         }
+    }
+
+    fun osvezavanjeTabele() {
+        tabela.model = modelTabele
+        modelTabele.fireTableDataChanged()
+
+    }
+
+    suspend fun pretraga(zaPretragu: String) {
+
+
+        GlobalScope.launch(Dispatchers.Default) {
+
+            modelTabele.pretraga(zaPretragu)
+
+                osvezavanjeTabele()
+
+        }
+
     }
 
 
