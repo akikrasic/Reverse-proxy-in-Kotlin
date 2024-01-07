@@ -5,9 +5,9 @@ import javax.swing.table.AbstractTableModel
 
 class ModelTabele:AbstractTableModel() {
     val kolone = arrayOf("Host", "URL", "Metoda")
-    val listaSvih = mutableListOf<KomunikacijaPodaci>()
     val pravljenjeStringaZaPrikazUTekstArei = PravljenjeStringaZaPrikazUTekstArei()
-    override fun getRowCount(): Int  = listaSvih.size
+    val radSaListomUModeluTabele = RadSaListomUModeluTabele()
+    override fun getRowCount(): Int  = radSaListomUModeluTabele.listaZaPrikaz.size
 
     override fun getColumnCount(): Int = kolone.size
 
@@ -15,14 +15,19 @@ class ModelTabele:AbstractTableModel() {
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any   =
         when(columnIndex){
-
-            0->listaSvih[rowIndex].host
-            1->listaSvih[rowIndex].url
-            2->listaSvih[rowIndex].metoda
+        
+            0->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].host
+            1->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].zahtev.url
+            2->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].zahtev.metoda
             else->""
         }
-    fun dodajte( k:KomunikacijaPodaci){
-        listaSvih.add(k)
+    suspend fun dodajte(k:KomunikacijaPodaci){
+        radSaListomUModeluTabele.dodajteUListu(k)
     }
-    fun napraviteStringZaPrikazUTextArei(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdKomunikacije(listaSvih[indeks])
+    fun napraviteStringZaPrikazUTextAreiOdgovor(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdOdgovora(radSaListomUModeluTabele.listaZaPrikaz[indeks])
+    fun napraviteStringZaPrikazUTextAreiZahtev(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdZahteva(radSaListomUModeluTabele.listaZaPrikaz[indeks])
+
+    suspend fun pretraga(zaPretragu:String){
+        radSaListomUModeluTabele.pretraga(zaPretragu)
+    }
 }

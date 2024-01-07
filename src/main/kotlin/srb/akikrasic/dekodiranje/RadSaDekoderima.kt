@@ -1,6 +1,6 @@
 package srb.akikrasic.dekodiranje
 
-object RadSaDekoderima {
+class RadSaDekoderima {
     val prazanDekoder = PrazanDekoder()
     private val mapaSaDekoderima = mapOf(
         "br" to BrotliDekoder(),
