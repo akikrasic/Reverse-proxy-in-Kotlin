@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import srb.akikrasic.forma.Forma
+import srb.akikrasic.forma.ModelTabeleNaziviKolona
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -15,9 +16,9 @@ import javax.swing.JTextField
 
 class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
 
-    val labela = JLabel("Претрага")
-    val polje = JTextField()
-
+    val poljeHost = JTextField()
+    val poljeUrl = JTextField()
+    val poljeMetoda = JTextField()
     init{
         layout = GridBagLayout()
         val c = GridBagConstraints()
@@ -27,10 +28,15 @@ class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
         c.fill = GridBagConstraints.BOTH
         c.insets = Insets(5,5,5,5)
         c.anchor = GridBagConstraints.EAST
-        add(labela,c)
-        c.gridy = 1
-        add(polje,c)
-        polje.addKeyListener(object:KeyListener{
+        val labeleNazivi = ModelTabeleNaziviKolona.naziviKolona
+        val polja = listOf(poljeHost, poljeUrl, poljeMetoda)
+        for( i in 0..2) {
+            add(JLabel(labeleNazivi[i]), c)
+            c.gridy++
+            add(polja[i], c)
+            c.gridy++
+        }
+        val osluskivac = object:KeyListener{
             override  fun keyTyped(e: KeyEvent?) {
 
             }
@@ -40,10 +46,23 @@ class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
             }
 
             override fun keyReleased(e: KeyEvent?) {
-                val zaPretragu = polje.text.trim()
-                GlobalScope.launch (Dispatchers.Default){ forma.pretraga(zaPretragu)}
+                GlobalScope.launch (Dispatchers.Default){ forma.pretraga(PrenosInformacijaZaPretragu(
+                    poljeHost.text.trim(),
+                    poljeUrl.text.trim(),
+                    poljeMetoda.text.trim()
+                ))
+                println(PrenosInformacijaZaPretragu(
+                    poljeHost.text.trim(),
+                    poljeUrl.text.trim(),
+                    poljeMetoda.text.trim()
+                ))
+                }
             }
 
-        })
+        }
+
+        poljeHost.addKeyListener(osluskivac)
+        poljeUrl.addKeyListener(osluskivac)
+        poljeMetoda.addKeyListener(osluskivac)
     }
 }
