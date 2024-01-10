@@ -3,6 +3,7 @@ package srb.akikrasic.forma
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import srb.akikrasic.forma.paneli.PrenosInformacijaZaPretragu
 import srb.akikrasic.forma.paneli.UnosTekstaZaPretraguPanel
 import srb.akikrasic.komunikacija.Komunikacija
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
@@ -102,7 +103,7 @@ class Forma : JFrame() {
 
     }
 
-    suspend fun pretraga(zaPretragu: String) {
+    suspend fun pretraga(zaPretragu: PrenosInformacijaZaPretragu) {
 
 
         GlobalScope.launch(Dispatchers.Default) {

@@ -1,10 +1,11 @@
 package srb.akikrasic.forma
 
+import srb.akikrasic.forma.paneli.PrenosInformacijaZaPretragu
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import javax.swing.table.AbstractTableModel
 
 class ModelTabele:AbstractTableModel() {
-    val kolone = arrayOf("Host", "URL", "Metoda")
+    val kolone = ModelTabeleNaziviKolona.naziviKolona
     val pravljenjeStringaZaPrikazUTekstArei = PravljenjeStringaZaPrikazUTekstArei()
     val radSaListomUModeluTabele = RadSaListomUModeluTabele()
     override fun getRowCount(): Int  = radSaListomUModeluTabele.listaZaPrikaz.size
@@ -27,7 +28,7 @@ class ModelTabele:AbstractTableModel() {
     fun napraviteStringZaPrikazUTextAreiOdgovor(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdOdgovora(radSaListomUModeluTabele.listaZaPrikaz[indeks])
     fun napraviteStringZaPrikazUTextAreiZahtev(indeks:Int):String = pravljenjeStringaZaPrikazUTekstArei.napraviteTekstOdZahteva(radSaListomUModeluTabele.listaZaPrikaz[indeks])
 
-    suspend fun pretraga(zaPretragu:String){
+    suspend fun pretraga(zaPretragu:PrenosInformacijaZaPretragu){
         radSaListomUModeluTabele.pretraga(zaPretragu)
     }
 }
