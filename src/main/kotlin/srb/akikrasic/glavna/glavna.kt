@@ -462,7 +462,7 @@ fun sabiranjeOdgovora(id:Int):ByteArray{
     }
 }
 
-suspend fun ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(browserInput:InputStream, browserOutput:OutputStream, serverInput:InputStream, serverOutput:OutputStream, id:Int){
+suspend fun ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(browserInput:InputStream, browserOutput:OutputStream, serverInput:InputStream, serverOutput:OutputStream, id:Int, url:String){
     GlobalScope.launch(Dispatchers.IO){
         var brojac =0
         while(true){
@@ -479,6 +479,7 @@ suspend fun ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(browserInput:InputStream, b
             val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
           //  val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
          //   println("telo zahteva je : ${String(dekoder.dekodujte(zahtev.telo))}")
+            Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor ))
 
             brojac++
 
@@ -570,7 +571,8 @@ suspend fun obradaSoketa2(s:Socket){
 
         val noviSoket = mapaSoketa[host]?: generisiteNoviSoketKaServeru(hostUrl)
         upisivanjeNaSoket(noviSoket.getOutputStream(), ucitaniBajtovi)
-        ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(inp, out,noviSoket.getInputStream(), noviSoket.getOutputStream(), id )
+      // ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(inp, out,noviSoket.getInputStream(), noviSoket.getOutputStream(), id, host )
+        ucitavanjeIUpisivanjeZahtevOdgovor(inp, out,noviSoket.getInputStream(), noviSoket.getOutputStream(), id, host)
     }
 }
 suspend fun obradaSoketa(s: Socket) {
