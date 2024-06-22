@@ -2,7 +2,6 @@ package srb.akikrasic.dekodiranje
 
 import com.nixxcode.jvmbrotli.common.BrotliLoader
 import com.nixxcode.jvmbrotli.dec.Decoder
-import org.apache.commons.compress.compressors.brotli.BrotliUtils
 import com.nixxcode.jvmbrotli.enc.Encoder
 open class A{
     open fun metoda(){

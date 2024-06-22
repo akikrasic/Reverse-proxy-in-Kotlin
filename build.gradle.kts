@@ -18,11 +18,9 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
 
-    implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.bouncycastle:bcpkix-fips:1.0.7")
     implementation("org.bouncycastle:bctls-fips:1.0.17")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.apache.commons:commons-compress:1.21")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli:0.2.0")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli-linux-x86-amd64:0.2.0")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli-parent:0.2.0")
@@ -50,5 +48,6 @@ val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "17"
 }
+
 
 
