@@ -83,37 +83,28 @@ suspend fun ucitavanjeIUpisivanjeZahtevOdgovor(
     url: String
 ) {
 
-        while (true) {
+    while (true) {
 
-                val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
+        val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
 
-                    ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
-                    println("ime niti je ${Thread.currentThread().name}")
+        ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
+        println("ime niti je ${Thread.currentThread().name}")
 
-                val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
-                //   val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
-                //  println("hederi zahteva  ${zahtev.hederi.mapaOriginalnihHedera}")
-                // println("telo zahteva je ${url} : ${String(dekoder.dekodujte(zahtev.telo))}")
-                // Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(zahtev.url,String(dekoder.dekodujte(zahtev.telo)) ))
-                //  Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev.url, zahtev.metoda, zahtev.hederi,String(dekoder.dekodujte(zahtev.telo)) ))
+        val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
+        val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
 
+        ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
 
-                val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
+        val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
 
-                    ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
-
-                val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
-                //val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
-                //   println("hederi odgovor ${odgovor.hederi.mapaOriginalnihHedera}")
-
-                //   println("telo odgovora je ${url} ${String(dekoderOdgovor.dekodujte(odgovor.telo))}")
-                Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
+        Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
 
 
-        }
+    }
 
 
 }
+
 suspend fun ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
     browserInput: InputStream,
     browserOutput: OutputStream,
@@ -122,36 +113,17 @@ suspend fun ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
     id: Int,
     url: String
 ) {
-        while (true) {
+    while (true) {
 
-                val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
+        val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
+        ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
+        val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
+        val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
+        ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
+        val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
+        Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
 
-                    ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
-
-                val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
-                //val dekoderOdgovor = RadSaDekoderima.vratiteDekoder((odgovor.hederi.pretraga(HederiNazivi.contentEncoding)))
-                //   println("hederi odgovor ${odgovor.hederi.mapaOriginalnihHedera}")
-
-                //   println("telo odgovora je ${url} ${String(dekoderOdgovor.dekodujte(odgovor.telo))}")
-
-                val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
-
-                    ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
-
-                val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
-                //   val dekoder = RadSaDekoderima.vratiteDekoder( zahtev.hederi.pretraga(HederiNazivi.contentEncoding))
-                //  println("hederi zahteva  ${zahtev.hederi.mapaOriginalnihHedera}")
-                // println("telo zahteva je ${url} : ${String(dekoder.dekodujte(zahtev.telo))}")
-                // Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(zahtev.url,String(dekoder.dekodujte(zahtev.telo)) ))
-                //  Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev.url, zahtev.metoda, zahtev.hederi,String(dekoder.dekodujte(zahtev.telo)) ))
-
-
-                Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
-
-
-
-        }
-
+    }
 
 }
 
@@ -165,15 +137,6 @@ fun generisiteNoviSSLSocketKaServeru(urlIPort: UrlIPort): SSLSocket {
     return ssfNova.createSocket(InetAddress.getByName(urlIPort.url), urlIPort.port) as SSLSocket
 }
 
-fun generisiteNoviSoketKaServeru(urlIPort: UrlIPort): Socket {
-    if (urlIPort.port == 443) {
-        return generisiteNoviSSLSocketKaServeru(urlIPort)
-    }
-    println("ural i port su ")
-    println(urlIPort)
-    return Socket(InetAddress.getByName(urlIPort.url), urlIPort.port)
-}
-
 val mapaSertifikata = mutableMapOf<String, KeyStore>()
 fun vratiteSertifikat(url: String): KeyStore {
     if (mapaSertifikata.containsKey(url)) {
@@ -184,14 +147,16 @@ fun vratiteSertifikat(url: String): KeyStore {
         return sertifikat
     }
 }
-fun izdavajanjeUrlaIPortaIzHostaZahteva(zahtev: Zahtev):UrlIPort{
-    val urlIPortStringovi= zahtev.hederi.pretraga(HederiNazivi.host).split(":")
 
-    if( urlIPortStringovi.size==1) {
+fun izdavajanjeUrlaIPortaIzHostaZahteva(zahtev: Zahtev): UrlIPort {
+    val urlIPortStringovi = zahtev.hederi.pretraga(HederiNazivi.host).split(":")
+
+    if (urlIPortStringovi.size == 1) {
         return UrlIPort(urlIPortStringovi[0], 80)
     }
     return UrlIPort(urlIPortStringovi[0], urlIPortStringovi[1].toInt())
 }
+
 suspend fun obradaSoketa2(s: Socket) {
     withContext(mojDispecer) {
         val id = brojac.addAndGet(1)
@@ -244,18 +209,11 @@ suspend fun obradaSoketa2(s: Socket) {
 
         } else {
             println("udje li on ovde uopste")
-//        val host = zahtev.hederi.pretraga(HederiNazivi.host)
-//        //   println("${zahtev.metoda} ${zahtev.url} ${zahtev.protokolVerzija}")
-//        //  println(zahtev.hederi)
-//        val hostUrl = VadjenjeIzStringa.podeliteHost(host)
-//        println("novi soket da vidimo ${hostUrl} ${host} ")
+
 
             val noviSoket = Socket(InetAddress.getByName(zahtev.hederi.pretraga(HederiNazivi.host)), 80)
-            //  generisiteNoviSoketKaServeru(hostUrl)// menjano Maj 2024. mapaSoketa[host]?: generisiteNoviSoketKaServeru(hostUrl)
             println(noviSoket)
             upisivanjenaSoketJednePoruke(noviSoket.getOutputStream(), ucitaniBajtovi)
-            //upisivanjeNaSoket(noviSoket.getOutputStream(), ucitaniBajtovi)
-            // ucitavanjeIUpisivanjePrvoOdgovorPaZahtev(inp, out,noviSoket.getInputStream(), noviSoket.getOutputStream(), id, host )
             ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
                 inp,
                 out,
@@ -269,11 +227,6 @@ suspend fun obradaSoketa2(s: Socket) {
 }
 
 val brojac = AtomicInteger(0)
-
-
-val r = '\r'.toByte()
-val H = 'H'.toByte()
-
 
 val kanalZaStampanje: Channel<ByteArray> = Channel<ByteArray>(10)
 val kanalZaStampanjeUFajl: Channel<ByteArray> = Channel<ByteArray>(100)
@@ -294,6 +247,7 @@ suspend fun stampanjeUFajl() {
     }
 
 }
+
 val mojDispecer = Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()
 fun main(args: Array<String>) {
     System.setProperty("awt.useSystemAAFontSettings", "on");
@@ -325,7 +279,7 @@ fun main(args: Array<String>) {
 
         while (true) {
             val s = server.accept()
-            /*NOSONAR*/  GlobalScope.launch   (Dispatchers.IO) {
+            /*NOSONAR*/  GlobalScope.launch(Dispatchers.IO) {
                 try {
                     obradaSoketa2(s)
                 } catch (e: Exception) {
