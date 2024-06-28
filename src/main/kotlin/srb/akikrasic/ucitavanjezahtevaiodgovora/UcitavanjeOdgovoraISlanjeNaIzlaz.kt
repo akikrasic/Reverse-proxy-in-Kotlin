@@ -18,12 +18,12 @@ class UcitavanjeOdgovoraISlanjeNaIzlaz(override val inp:InputStream,override val
 
 
 
-    fun ucitavanjeHeksDuzineChunkedOdgovora():Int{
+    suspend fun ucitavanjeHeksDuzineChunkedOdgovora():Int{
         val ucitanaHeksDuzina = vadjenjeStringaIzTelaIUpisNaStrim(SlovaKonstante.krajRedaR)
         samoUcitavanjeIPrepisivanje()
         return PretvaranjeStringaUBroj.pretvaranjeHeksadecimalnogStringaUBroj(ucitanaHeksDuzina)
     }
-    fun ucitavanjeChunkedTela():ByteArray{
+    suspend fun ucitavanjeChunkedTela():ByteArray{
         var zbir = 0
         var duzina = ucitavanjeHeksDuzineChunkedOdgovora()
         println("duzina tela za ucitavanje je ${duzina}")
@@ -60,7 +60,7 @@ class UcitavanjeOdgovoraISlanjeNaIzlaz(override val inp:InputStream,override val
         ceoOdgovor.statusKod = v2
         ceoOdgovor.statusPoruka = v3
     }
-    override fun ucitavanjeTela(){
+    override suspend fun ucitavanjeTela(){
         if(ceoOdgovor.hederi.pretraga(HederiNazivi.transferEncoding)== HederiVrednosti.chunked){
             ceoOdgovor.telo = ucitavanjeChunkedTela()
 
