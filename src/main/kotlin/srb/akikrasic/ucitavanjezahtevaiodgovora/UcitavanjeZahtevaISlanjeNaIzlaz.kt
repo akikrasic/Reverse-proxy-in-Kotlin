@@ -19,8 +19,7 @@ class UcitavanjeZahtevaISlanjeNaIzlaz(override val inp: InputStream, override va
 
     }
 
-    override fun ucitavanjeTela() {
+    suspend override fun ucitavanjeTela() {
         ucitavanjeNormalnogTela()
     }
-
 }

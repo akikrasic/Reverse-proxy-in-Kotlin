@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "2.0.0"
 }
 
 group = "srb.aki"
@@ -38,15 +38,15 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "21"
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
 }
 
 

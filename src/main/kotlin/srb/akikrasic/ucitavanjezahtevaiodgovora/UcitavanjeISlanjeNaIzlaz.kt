@@ -1,24 +1,26 @@
 package srb.akikrasic.ucitavanjezahtevaiodgovora
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import srb.akikrasic.ucitavanjezahtevaiodgovora.konstante.HederiNazivi
 import srb.akikrasic.ucitavanjezahtevaiodgovora.konstante.SlovaKonstante
 import java.io.InputStream
 import java.io.OutputStream
 
 abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out: OutputStream){
-    fun ucitajteIntIBajt(): UcitaniIntIBajt {
+    suspend fun ucitajteIntIBajt(): UcitaniIntIBajt {
         try {
             val ucitaniInt = inp.read()
             return UcitaniIntIBajt(ucitaniInt)
-        }
-        catch(e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             println("Doslo je do greske prilikom ucitavanja")
             return ucitaniIntIBajtMinus1
         }
+
     }
     val bajtoviZaStampu = mutableListOf<Byte>()
-    fun vadjenjeStringaIzTelaIUpisNaStrim(znakZaZaustavljanje:Byte):String{
+    suspend fun vadjenjeStringaIzTelaIUpisNaStrim(znakZaZaustavljanje:Byte):String{
         val sb = StringBuilder()
         var ucitaniIntIBajt = ucitajteIntIBajt()
 
@@ -32,22 +34,23 @@ abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out:
         return sb.toString()
     }
 
-    fun samoUcitavanjeIPrepisivanje(){
+    suspend fun samoUcitavanjeIPrepisivanje(){
         try {
-            //out.write(inp.read())
-            bajtoviZaStampu.add(inp.read().toByte())
-
+            withContext(Dispatchers.IO) {
+                //out.write(inp.read())
+                bajtoviZaStampu.add(inp.read().toByte())
+            }
         }
         catch(e:Exception){
             e.printStackTrace()
         }
     }
-    fun ucitavanjePrvogRedaTriVrednosti():TriVrednosti = TriVrednosti(
+    suspend fun ucitavanjePrvogRedaTriVrednosti():TriVrednosti = TriVrednosti(
         vadjenjeStringaIzTelaIUpisNaStrim( SlovaKonstante.prazno),
         vadjenjeStringaIzTelaIUpisNaStrim(SlovaKonstante.prazno),
         vadjenjeStringaIzTelaIUpisNaStrim( SlovaKonstante.krajRedaR)
     )
-    fun ucitavanjeHedera(){
+    suspend fun ucitavanjeHedera(){
         val hederi = HederiCuvanjeIPretraga()
         var ucitaniIntIBajt = ucitajteIntIBajt()
         while(ucitaniIntIBajt.ucitaniInt!=-1 && ucitaniIntIBajt.ucitaniBajt!= SlovaKonstante.krajRedaR) {
@@ -65,7 +68,7 @@ abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out:
         bajtoviZaStampu.add(ucitaniIntIBajt.ucitaniBajt)
         vratiteObjekat().hederi = hederi
     }
-    fun ucitavanjeNormalnogTelaBajtovi(velicina:Int):ByteArray{
+    suspend fun ucitavanjeNormalnogTelaBajtovi(velicina:Int):ByteArray{
         val niz = ByteArray(velicina)
         for(i in 0..velicina-1){
             val ucitaniIntIBajt = ucitajteIntIBajt()
@@ -76,7 +79,7 @@ abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out:
         return niz
     }
 
-    fun ucitavanjeNormalnogTela(){
+    suspend fun ucitavanjeNormalnogTela(){
         vratiteObjekat().telo =  ucitavanjeNormalnogTelaBajtovi(PretvaranjeStringaUBroj.pretvaranjeStringaUBroj(vratiteObjekat().hederi.pretraga(
             HederiNazivi.contentLength)))
 
@@ -84,22 +87,21 @@ abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out:
 
     abstract fun vratiteObjekat():ZajednickoZaZahtevIOdgovor
     abstract fun dodeliteTriVrednostiUPrvomRedu(vr:TriVrednosti)
-     fun ucitavanjePrvogReda(){
+     suspend fun ucitavanjePrvogReda(){
          dodeliteTriVrednostiUPrvomRedu(ucitavanjePrvogRedaTriVrednosti())
      }
-    abstract fun ucitavanjeTela()
-    fun ucitavanjeISlanjeNaIzlaz(){
-        ucitavanjePrvogReda()
+    abstract suspend fun ucitavanjeTela()
+    suspend fun ucitavanjeISlanjeNaIzlaz(){
+            ucitavanjePrvogReda()
 
-        samoUcitavanjeIPrepisivanje()
+            samoUcitavanjeIPrepisivanje()
 
-        ucitavanjeHedera()
+            ucitavanjeHedera()
 
-        samoUcitavanjeIPrepisivanje()
+            samoUcitavanjeIPrepisivanje()
 
-        ucitavanjeTela()
-        out.write(bajtoviZaStampu.toByteArray())
-        out.flush()
-
+            ucitavanjeTela()
+            out.write(bajtoviZaStampu.toByteArray())
+            out.flush()
     }
 }
