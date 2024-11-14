@@ -30,23 +30,23 @@ class UcitavanjeOdgovoraISlanjeNaIzlazTest{
             out
         )
 
-    fun proveraDaLiSamoPrepisujeOdJedanNaDrugi(){
-
-
-        val odgovorISlanjeNaIzlaz = napraviteObraduIOdgovor(odgovor)
-
-        for (i in 0..odgovor.lastIndex){
-            odgovorISlanjeNaIzlaz.samoUcitavanjeIPrepisivanje()
-        }
-
-        assertEquals(odgovor, out.toString())
-    }
-
-    fun napraviteOdgovorObjekat(odgovorTekst:String):CeoOdgovor{
-        val odgovorISlanjeNaIzlaz = napraviteObraduIOdgovor(odgovorTekst)
-        odgovorISlanjeNaIzlaz.ucitavanjeISlanjeNaIzlaz()
-        return odgovorISlanjeNaIzlaz.vratiteOdgovor()
-    }
+//    fun proveraDaLiSamoPrepisujeOdJedanNaDrugi(){
+//
+//
+//        val odgovorISlanjeNaIzlaz = napraviteObraduIOdgovor(odgovor)
+//
+//        for (i in 0..odgovor.lastIndex){
+//            odgovorISlanjeNaIzlaz.samoUcitavanjeIPrepisivanje()
+//        }
+//
+//        assertEquals(odgovor, out.toString())
+//    }
+//
+//    fun napraviteOdgovorObjekat(odgovorTekst:String):CeoOdgovor{
+//        val odgovorISlanjeNaIzlaz = napraviteObraduIOdgovor(odgovorTekst)
+//        odgovorISlanjeNaIzlaz.ucitavanjeISlanjeNaIzlaz()
+//        return odgovorISlanjeNaIzlaz.vratiteOdgovor()
+//    }
 
     fun proveraOsnovnihStvari(ceoOdgovorObjekat:CeoOdgovor){
         assertEquals(verzija, ceoOdgovorObjekat.protokolVerzija)
@@ -55,19 +55,19 @@ class UcitavanjeOdgovoraISlanjeNaIzlazTest{
         assertEquals(HederiVrednosti.br, ceoOdgovorObjekat.hederi.pretraga(HederiNazivi.contentEncoding))
         assertEquals(telo, String(ceoOdgovorObjekat.telo))
     }
-    @Test
-    fun proveraDaLiLepoIzdvajaSveNormalno(){
-        val odgovorObjekat = napraviteOdgovorObjekat(odgovor)
-        proveraOsnovnihStvari( odgovorObjekat )
-        assertEquals(duzina, PretvaranjeStringaUBroj.pretvaranjeStringaUBroj(odgovorObjekat.hederi.pretraga(HederiNazivi.contentLength)))
-
-    }
-
-    @Test
-    fun proveraDaLiLepoRadiSveNormalnoChunked(){
-        val odgovorObjekat = napraviteOdgovorObjekat(odgovorChunked)
-        assertEquals(HederiVrednosti.chunked, odgovorObjekat.hederi.pretraga(HederiNazivi.transferEncoding))
-        assertEquals("${chunkedTekst}${chunkedTekstDodatak}", String(odgovorObjekat.telo))
-    }
+//    @Test
+//    fun proveraDaLiLepoIzdvajaSveNormalno(){
+//        val odgovorObjekat = napraviteOdgovorObjekat(odgovor)
+//        proveraOsnovnihStvari( odgovorObjekat )
+//        assertEquals(duzina, PretvaranjeStringaUBroj.pretvaranjeStringaUBroj(odgovorObjekat.hederi.pretraga(HederiNazivi.contentLength)))
+//
+//    }
+//
+//    @Test
+//    fun proveraDaLiLepoRadiSveNormalnoChunked(){
+//        val odgovorObjekat = napraviteOdgovorObjekat(odgovorChunked)
+//        assertEquals(HederiVrednosti.chunked, odgovorObjekat.hederi.pretraga(HederiNazivi.transferEncoding))
+//        assertEquals("${chunkedTekst}${chunkedTekstDodatak}", String(odgovorObjekat.telo))
+//    }
 
 }

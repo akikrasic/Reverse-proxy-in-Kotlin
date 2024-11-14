@@ -2,23 +2,14 @@ package srb.akikrasic.ucitavanjezahtevaiodgovora
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import srb.akikrasic.ucitavanjeWebSocketa.UcitavanjeZajednicko
 import srb.akikrasic.ucitavanjezahtevaiodgovora.konstante.HederiNazivi
 import srb.akikrasic.ucitavanjezahtevaiodgovora.konstante.SlovaKonstante
 import java.io.InputStream
 import java.io.OutputStream
 
-abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out: OutputStream){
-    suspend fun ucitajteIntIBajt(): UcitaniIntIBajt {
-        try {
-            val ucitaniInt = inp.read()
-            return UcitaniIntIBajt(ucitaniInt)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            println("Doslo je do greske prilikom ucitavanja")
-            return ucitaniIntIBajtMinus1
-        }
+abstract class UcitavanjeISlanjeNaIzlaz (inp:InputStream, out: OutputStream):UcitavanjeZajednicko(inp, out){
 
-    }
     val bajtoviZaStampu = mutableListOf<Byte>()
     suspend fun vadjenjeStringaIzTelaIUpisNaStrim(znakZaZaustavljanje:Byte):String{
         val sb = StringBuilder()
@@ -36,10 +27,10 @@ abstract class UcitavanjeISlanjeNaIzlaz (open val inp:InputStream, open val out:
 
     suspend fun samoUcitavanjeIPrepisivanje(){
         try {
-            withContext(Dispatchers.IO) {
+          //  withContext(Dispatchers.IO) {
                 //out.write(inp.read())
                 bajtoviZaStampu.add(inp.read().toByte())
-            }
+            //}
         }
         catch(e:Exception){
             e.printStackTrace()

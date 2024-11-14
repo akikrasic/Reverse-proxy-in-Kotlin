@@ -22,4 +22,12 @@ class UcitavanjeZahtevaISlanjeNaIzlaz(override val inp: InputStream, override va
     suspend override fun ucitavanjeTela() {
         ucitavanjeNormalnogTela()
     }
+
+    override fun toString()=
+        """
+            ${zahtev.metoda} ${zahtev.url} ${zahtev.protokolVerzija}
+            ${zahtev.hederi.mapaOriginalnihHedera.map { "${it.key}: ${it.value}\n" }}
+            ${zahtev.telo}
+        """.trimIndent()
+
 }

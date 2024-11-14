@@ -7,6 +7,7 @@ import srb.akikrasic.komunikacija.Komunikacija
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import srb.akikrasic.sertifikat.generisanjeSertifikata
 import srb.akikrasic.sertifikat.sifra
+import srb.akikrasic.ucitavanjeWebSocketa.UcitavanjeWebSocketa
 import srb.akikrasic.ucitavanjezahtevaiodgovora.UcitavanjeOdgovoraISlanjeNaIzlaz
 import srb.akikrasic.ucitavanjezahtevaiodgovora.UcitavanjeZahtevaISlanjeNaIzlaz
 import srb.akikrasic.ucitavanjezahtevaiodgovora.UrlIPort
@@ -33,6 +34,10 @@ import javax.swing.SwingUtilities
 
 val port = 8080
 val poruka = "HTTP/1.1 200 Connection established\r\n\r\n".toByteArray()
+val porukaWebSocket = "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n\r\n".toByteArray()
+
+val stringZaWebSocket="258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+
 
 suspend fun upisivanjenaSoketJednePoruke(out: OutputStream, bajtovi: ByteArray) {
     withContext(Dispatchers.IO) {
@@ -82,29 +87,76 @@ suspend fun ucitavanjeIUpisivanjeZahtevOdgovor(
     id: Int,
     url: String
 ) {
+        var put = 1
+        while (true) {
 
-    while (true) {
+            val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
 
-        val ucitavanjeZahtevaObjekat = UcitavanjeZahtevaISlanjeNaIzlaz(browserInput, serverOutput)
+           // try {
+                ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
+            println("Ovo je ${put}. ${url} zahtev je ${ucitavanjeZahtevaObjekat}")
+          //  }
+//            catch (e:Exception){
+//                println("Greska uhvacena u zahtev: ${url} ${e.message} ${e.stackTraceToString()}")
+//            }
 
-        ucitavanjeZahtevaObjekat.ucitavanjeISlanjeNaIzlaz()
-        println("ime niti je ${Thread.currentThread().name}")
+            val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
+           // val hederiLista = zahtev.hederi.mapaOriginalnihHedera.map { "${it.key}: ${it.value }"}
+//            println("""
+//               ${zahtev.metoda} ${zahtev.url}
+//               ${hederiLista}
+//            """.trimIndent())
 
-        val zahtev = ucitavanjeZahtevaObjekat.vratiteZahtev()
-        val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
+            val ucitavanjeOdgovoraObjekat = UcitavanjeOdgovoraISlanjeNaIzlaz(serverInput, browserOutput)
 
-        ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
+          //  try {
+                ucitavanjeOdgovoraObjekat.ucitavanjeISlanjeNaIzlaz()
+           // }
+//            catch (e:Exception){
+//                println("Greska uhvacena u odgovor: ${url} ${e.message} ${e.stackTraceToString()}")
+//
+//            }
+            val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
+            if( odgovor.statusKod>="300" && odgovor.statusKod<"400"){
+                println("""
+                    
+                    300 je
+                    ${odgovor.statusKod}
+                    ${odgovor.telo}
+                    ${zahtev.url}
+                    
+                """.trimIndent())
+            }
 
-        val odgovor = ucitavanjeOdgovoraObjekat.vratiteOdgovor()
+            Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
+            if( odgovor.hederi.pretraga(HederiNazivi.connection)=="close"){
+                break
+            }
+            if( zahtev.hederi.pretraga("Upgrade")=="websocket"){
+               // upisivanjenaSoketJednePoruke(browserOutput, porukaWebSocket)
+                println("""U pitanju je websocket ${url}
+                    zahtev: ${ucitavanjeZahtevaObjekat} 
+                    odgovor: ${ucitavanjeOdgovoraObjekat}
+                    
+                    """)
+                GlobalScope.launch(mojDispecer) {
+                    nastavakWebSocket(serverInput, browserOutput, url, "server")
+                }
+                GlobalScope.launch (mojDispecer){ nastavakWebSocket(browserInput, serverOutput, url, "klijent")  }
+                break
+            }
+            put++
+        }
 
-        Komunikacija.kanalZaKomunikaciju.send(KomunikacijaPodaci(url, zahtev, odgovor))
-
-
-    }
 
 
 }
 
+suspend fun nastavakWebSocket(ulaz:InputStream, izlaz:OutputStream, url:String, koSalje:String ){
+
+        UcitavanjeWebSocketa(ulaz, izlaz, url, koSalje).ucitajteWebSocketPorukuIPrepisite();
+
+}
 suspend fun ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
     browserInput: InputStream,
     browserOutput: OutputStream,
@@ -134,7 +186,8 @@ val provider = "BCJSSE"
 
 fun generisiteNoviSSLSocketKaServeru(urlIPort: UrlIPort): SSLSocket {
     val ssfNova = SSLSocketFactory.getDefault() as SSLSocketFactory
-    return ssfNova.createSocket(InetAddress.getByName(urlIPort.url), urlIPort.port) as SSLSocket
+    val soket =  ssfNova.createSocket(InetAddress.getByName(urlIPort.url), urlIPort.port) as SSLSocket
+    return soket
 }
 
 val mapaSertifikata = mutableMapOf<String, KeyStore>()
@@ -167,18 +220,24 @@ suspend fun obradaSoketa2(s: Socket) {
         zahtevPrvi.ucitavanjeISlanjeNaIzlaz()
         val ucitaniBajtovi = bajtoviOut.toByteArray()
 
-        println("prvi zahtev je id:${id} : ${String(ucitaniBajtovi)} ")
+     //   println("prvi zahtev je id:${id} : ${String(ucitaniBajtovi)} ")
 
         val zahtev = zahtevPrvi.vratiteZahtev()
         if (ucitaniBajtovi.size == 0) {
             return@withContext
         }
         val metoda = zahtev.metoda
-        if (metoda == HttpMetodeNazivi.connect) {
 
-            val urlIPort =
-                izdavajanjeUrlaIPortaIzHostaZahteva(zahtev)//izdvajanjeUrlaConnect(ucitaniBajtovi) //to je malo suvisno i treba se izbaci
+        val urlIPort =
+            izdavajanjeUrlaIPortaIzHostaZahteva(zahtev)//izdvajanjeUrlaConnect(ucitaniBajtovi) //to je malo suvisno i treba se izbaci
+        println("""
+            Ucitani bajtovi: 
+            ${String(ucitaniBajtovi)}""".trimIndent())
+        if (metoda == HttpMetodeNazivi.connect || urlIPort.port==443 ) {
 
+            if( metoda!=HttpMetodeNazivi.connect){
+                println("znaci nije connect a 443 je ")
+            }
 
             val sslContext = SSLContext.getInstance("TLSv1.3", provider)//TLS
             val ks = vratiteSertifikat(urlIPort.url)
@@ -191,7 +250,7 @@ suspend fun obradaSoketa2(s: Socket) {
 
             val sOut = sslSocket.getOutputStream()
             sslSocket.useClientMode = false
-
+          //  println("sslSoket ${urlIPort.url} ${sslSocket.enabledProtocols.toList()} ${sslSocket.enabledCipherSuites.toList()}")
             val noviSoket =
                 generisiteNoviSSLSocketKaServeru(urlIPort)//mapaSoketa[urlIPort.url]?:generisiteNoviSSLSocketKaServeru(urlIPort)
 
@@ -208,20 +267,21 @@ suspend fun obradaSoketa2(s: Socket) {
 
 
         } else {
-            println("udje li on ovde uopste")
+          // println("udje li on ovde uopste ${urlIPort.url} ${urlIPort.port} ${String(ucitaniBajtovi)}")
 
-
-            val noviSoket = Socket(InetAddress.getByName(zahtev.hederi.pretraga(HederiNazivi.host)), 80)
-            println(noviSoket)
-            upisivanjenaSoketJednePoruke(noviSoket.getOutputStream(), ucitaniBajtovi)
-            ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
-                inp,
-                out,
-                noviSoket.getInputStream(),
-                noviSoket.getOutputStream(),
-                id,
-                zahtev.url
+            val noviSoket = Socket(InetAddress.getByName(zahtev.hederi.pretraga(HederiNazivi.host)), 80
             )
+          //  println(noviSoket)
+            upisivanjenaSoketJednePoruke(noviSoket.getOutputStream(), ucitaniBajtovi)
+           ucitavanjeIUpisivanjeZahtevOdgovor(s.getInputStream(), s.getOutputStream(), noviSoket.getInputStream(), noviSoket.getOutputStream(), id, urlIPort.url)
+//         //           ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
+//                inp,
+//                out,
+//                noviSoket.getInputStream(),
+//                noviSoket.getOutputStream(),
+//                id,
+//                zahtev.url
+//            )
         }
     }
 }
@@ -279,7 +339,8 @@ fun main(args: Array<String>) {
 
         while (true) {
             val s = server.accept()
-            /*NOSONAR*/  GlobalScope.launch(Dispatchers.IO) {
+            /*NOSONAR*/  GlobalScope.launch(mojDispecer) { //tu sam izmenio 24. avgust 2024 bilo je Dispatchers.IO
+                
                 try {
                     obradaSoketa2(s)
                 } catch (e: Exception) {

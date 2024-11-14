@@ -20,6 +20,7 @@ class ModelTabele:AbstractTableModel() {
             0->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].host
             1->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].zahtev.url
             2->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].zahtev.metoda
+            3->radSaListomUModeluTabele.listaZaPrikaz[rowIndex].odgovor.statusKod
             else->""
         }
     suspend fun dodajte(k:KomunikacijaPodaci){

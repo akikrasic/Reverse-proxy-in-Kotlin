@@ -70,4 +70,11 @@ class UcitavanjeOdgovoraISlanjeNaIzlaz(override val inp:InputStream,override val
         }
     }
 
+    override fun toString()=
+        """
+            ${ceoOdgovor.statusKod} ${ceoOdgovor.statusPoruka} ${ceoOdgovor.protokolVerzija}
+            ${ceoOdgovor.hederi.mapaOriginalnihHedera.map { "${it.key}: ${it.value}\n" }}
+            ${ceoOdgovor.telo}
+        """.trimIndent()
+
 }
