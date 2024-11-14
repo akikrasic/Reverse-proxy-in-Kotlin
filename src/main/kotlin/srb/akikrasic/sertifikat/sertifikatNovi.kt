@@ -56,6 +56,9 @@ fun imeIzgradjivac(zemlja:String, lokacija:String, cn:String,org:String, orgJed:
 
 }
 val provider = "BCFIPS"
+
+
+
 fun generisanjeSertifikata(dnsName:String):KeyStore{
     val tip = "RSA"// "RSA"
     val algoritamPotpis ="SHA256withRSA" //menjano oktobar 2023

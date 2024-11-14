@@ -6,4 +6,5 @@ object HederiNazivi {
     val contentLength = "Content-Length"
     val contentEncoding="Content-Encoding"
     val host = "Host"
+    val connection = "Connection"
 }

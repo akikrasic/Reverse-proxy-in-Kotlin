@@ -24,6 +24,7 @@ dependencies {
     implementation("com.nixxcode.jvmbrotli:jvmbrotli:0.2.0")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli-linux-x86-amd64:0.2.0")
     implementation("com.nixxcode.jvmbrotli:jvmbrotli-parent:0.2.0")
+    implementation("org.apache.commons:commons-compress:1.27.1")
 
 
     testImplementation(kotlin("test-junit5"))

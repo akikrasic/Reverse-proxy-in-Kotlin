@@ -9,6 +9,7 @@ class PravljenjeStringaZaPrikazUTekstArei {
     val radSaDekoderima = RadSaDekoderima()
     private fun napraviteTekstOdZajednickogObjekta(zajednickoZaZahtevIOdgovor: ZajednickoZaZahtevIOdgovor):String{
         val sb = StringBuilder()
+        sb.append(zajednickoZaZahtevIOdgovor.protokolVerzija).append("\n")
         val dekoder = radSaDekoderima.vratiteDekoder(zajednickoZaZahtevIOdgovor.hederi.pretraga(HederiNazivi.contentEncoding))
         zajednickoZaZahtevIOdgovor.hederi.mapaOriginalnihHedera.forEach { kljuc, v-> sb.append(kljuc).append(": ").append(v).append("\n") }
         sb.append("\n").append(String(dekoder.dekodujte(zajednickoZaZahtevIOdgovor.telo)))
