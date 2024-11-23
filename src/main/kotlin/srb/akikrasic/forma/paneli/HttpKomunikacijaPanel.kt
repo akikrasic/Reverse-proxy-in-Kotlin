@@ -5,6 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import srb.akikrasic.forma.modelitabele.ModelTabele
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
+import srb.akikrasic.korisno.GuiKorisno
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -30,14 +31,11 @@ class HttpKomunikacijaPanel() : JPanel() {
         tabela.model = modelTabele
         tabela.autoCreateColumnsFromModel = true
 
-        val c = GridBagConstraints()
-        c.gridx = 0
-        c.gridy = 0
+        val c = GuiKorisno.napraviteGridBagConstraints()
+
         c.weighty = 0.05
         c.weightx = 0.3
-        c.insets = Insets(10, 10, 10, 10)
-        c.fill = GridBagConstraints.BOTH
-        c.anchor = GridBagConstraints.CENTER
+
         this.add(unosTeksta, c)
         c.gridy = 1
         c.weighty = 0.95

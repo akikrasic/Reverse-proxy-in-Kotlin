@@ -1,5 +1,6 @@
 package srb.akikrasic.forma.paneli
 
+import srb.akikrasic.korisno.GuiKorisno
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -15,12 +16,7 @@ class MojeSlanjeZahtevaPanel : JPanel(){
 
     init{
         layout = GridBagLayout()
-        val c = GridBagConstraints()
-        c.gridx = 0
-        c.gridy = 0
-        c.fill = GridBagConstraints.BOTH
-        c.anchor = GridBagConstraints.CENTER
-        c.insets = Insets(10, 10, 10, 10)
+        val c = GuiKorisno.napraviteGridBagConstraints()
         c.weightx = 0.2
         c.weighty = 0.2
         add(metodaKombo, c)
