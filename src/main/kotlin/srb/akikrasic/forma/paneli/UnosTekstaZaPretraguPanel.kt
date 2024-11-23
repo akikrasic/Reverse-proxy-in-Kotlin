@@ -3,8 +3,7 @@ package srb.akikrasic.forma.paneli
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import srb.akikrasic.forma.Forma
-import srb.akikrasic.forma.ModelTabeleNaziviKolona
+import srb.akikrasic.forma.modelitabele.ModelTabeleNaziviKolona
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -14,7 +13,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
+class UnosTekstaZaPretraguPanel(val panel: HttpKomunikacijaPanel) : JPanel() {
 
     val poljeHost = JTextField()
     val poljeUrl = JTextField()
@@ -46,7 +45,7 @@ class UnosTekstaZaPretraguPanel(val forma: Forma) : JPanel() {
             }
 
             override fun keyReleased(e: KeyEvent?) {
-                GlobalScope.launch (Dispatchers.Default){ forma.pretraga(PrenosInformacijaZaPretragu(
+                GlobalScope.launch (Dispatchers.Default){ panel.pretraga(PrenosInformacijaZaPretragu(
                     poljeHost.text.trim(),
                     poljeUrl.text.trim(),
                     poljeMetoda.text.trim()

@@ -1,5 +1,7 @@
-package srb.akikrasic.forma
+package srb.akikrasic.forma.modelitabele
 
+import srb.akikrasic.forma.PravljenjeStringaZaPrikazUTekstArei
+import srb.akikrasic.forma.RadSaListomUModeluTabele
 import srb.akikrasic.forma.paneli.PrenosInformacijaZaPretragu
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import javax.swing.table.AbstractTableModel

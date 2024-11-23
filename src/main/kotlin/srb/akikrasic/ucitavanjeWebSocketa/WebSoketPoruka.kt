@@ -1,5 +1,3 @@
 package srb.akikrasic.ucitavanjeWebSocketa
 
-class WebSoketPoruka {
-
-}
+data class WebSoketPoruka( val url:String, val klijent:Boolean, val poruka:String)
