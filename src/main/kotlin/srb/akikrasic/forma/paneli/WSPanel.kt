@@ -3,6 +3,7 @@ package srb.akikrasic.forma.paneli
 import kotlinx.coroutines.sync.Mutex
 import srb.akikrasic.forma.modelitabele.ModelTabeleWebSocketPoruke
 import srb.akikrasic.forma.modelliste.ModelListeWebSoket
+import srb.akikrasic.korisno.GuiKorisno
 import srb.akikrasic.podaci.Podaci
 import srb.akikrasic.podaci.UrlSaWebSoketPorukama
 import srb.akikrasic.ucitavanjeWebSocketa.WebSoketPoruka
@@ -30,12 +31,7 @@ class WSPanel : JPanel() {
         this.layout = GridBagLayout()
 
         tabelaPoruka.autoCreateColumnsFromModel = true
-        val c = GridBagConstraints()
-        c.fill = GridBagConstraints.BOTH
-        c.anchor = GridBagConstraints.CENTER
-        c.insets = Insets(10, 10, 10, 10)
-        c.gridx = 0
-        c.gridy = 0
+        val c = GuiKorisno.napraviteGridBagConstraints()
         c.weighty = 1.0
         c.weightx = 0.25
         this.add(JScrollPane(listaKonekcija), c)
