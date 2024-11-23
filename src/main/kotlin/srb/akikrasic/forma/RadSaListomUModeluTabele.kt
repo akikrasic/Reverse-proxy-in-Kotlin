@@ -3,13 +3,14 @@ package srb.akikrasic.forma
 import kotlinx.coroutines.sync.Mutex
 import srb.akikrasic.forma.paneli.PrenosInformacijaZaPretragu
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
+import srb.akikrasic.podaci.Podaci
 import java.util.*
 
 class RadSaListomUModeluTabele {
 
 
 
-    val listaSvih = Collections.synchronizedList(mutableListOf<KomunikacijaPodaci>())
+    val listaSvih = Podaci.listaSvihHttpZahtevaIOdgovora //najelegantnije resenje
     var listaZaPrikaz = listaSvih
     var zaPretragu:PrenosInformacijaZaPretragu= PrenosInformacijaZaPretragu("","","")
     val mutex = Mutex()

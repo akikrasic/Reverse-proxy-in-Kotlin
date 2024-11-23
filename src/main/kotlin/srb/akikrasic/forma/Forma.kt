@@ -2,118 +2,93 @@ package srb.akikrasic.forma
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import srb.akikrasic.forma.paneli.HttpKomunikacijaPanel
+import srb.akikrasic.forma.paneli.MojeSlanjeZahtevaPanel
 import srb.akikrasic.forma.paneli.PrenosInformacijaZaPretragu
-import srb.akikrasic.forma.paneli.UnosTekstaZaPretraguPanel
+import srb.akikrasic.forma.paneli.WSPanel
 import srb.akikrasic.komunikacija.Komunikacija
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
-import java.awt.GridBagConstraints
+import srb.akikrasic.ucitavanjeWebSocketa.WebSoketPoruka
 import java.awt.GridBagLayout
-import java.awt.Insets
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
+import java.util.concurrent.Executors
 import javax.swing.*
 
 class Forma : JFrame() {
 
-    val unosTeksta = UnosTekstaZaPretraguPanel(this)
-    val tabela = JTable()
-    val areaZahtev = JTextArea()
-    val areaOdgovor = JTextArea()
-    val tabbedPane = JTabbedPane()
-    val modelTabele = ModelTabele()
-    private fun osnovneOperacije() {
+    var httpKomunikacijaPanel = HttpKomunikacijaPanel()
+
+    var wsPanel = WSPanel()
+
+    fun osnovneOperacije() {
         this.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         val velicinaEkrana = toolkit.screenSize
         setSize(velicinaEkrana.width, velicinaEkrana.height)
+        isVisible = true
     }
 
     init {
-
-        tabbedPane.addTab("Захтев", JScrollPane(areaZahtev))
-        tabbedPane.addTab("Одговор", JScrollPane(areaOdgovor))
-        tabela.model = modelTabele
-        tabela.autoCreateColumnsFromModel = true
-        isVisible = true
-        osnovneOperacije()
-        val layout = GridBagLayout()
-        this.contentPane.layout = layout
-        val c = GridBagConstraints()
-        c.gridx = 0
-        c.gridy = 0
-        c.weighty = 0.05
-        c.weightx = 0.3
-        c.insets = Insets(10, 10, 10, 10)
-        c.fill = GridBagConstraints.BOTH
-        c.anchor = GridBagConstraints.CENTER
-        contentPane.add(unosTeksta, c)
-        c.gridy = 1
-        c.weighty = 0.95
-        c.weightx = 0.5
-        c.fill = GridBagConstraints.BOTH
-        contentPane.add(JScrollPane(tabela), c)
-
-        c.gridy = 1
-        c.gridx = 1
-        c.weighty = 0.95
-        c.weightx = 0.5
-        c.fill = GridBagConstraints.BOTH
-        contentPane.add(tabbedPane, c)
-        GlobalScope.launch(Dispatchers.Default) {
+        GlobalScope.launch(Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()) {
             while (true) {
                 dodajteUFormu(Komunikacija.kanalZaKomunikaciju.receive())
             }
         }
-        tabela.addMouseListener(object : MouseListener {
-            override fun mouseClicked(e: MouseEvent?) {
-                if (e!!.clickCount == 2) {
-                    val red = tabela.selectedRow
-                    areaZahtev.text = modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
-                    areaOdgovor.text = modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
-                }
+        GlobalScope.launch(Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()) {
+            while (true) {
+                dodajteUFormuWebSoket(Komunikacija.kanalZaKomunikacijuWebSoket.receive())
             }
+        }
+        osnovneOperacije()
+        val layout = GridBagLayout()
+        this.contentPane.layout = layout
+        this.contentPane = httpKomunikacijaPanel
 
-            override fun mousePressed(e: MouseEvent?) {
-            }
+        val bar = JMenuBar()
+        val glavniMeni = JMenu("Мени")
+        val httpMeni = JMenuItem("Хттп саобраћај")
+        val wsMeni = JMenuItem("Веб сокит")
+        val mojeSlanjeZahteva = JMenuItem("Моје слање захтева")
+        glavniMeni.add(httpMeni)
+        glavniMeni.add(wsMeni)
+        glavniMeni.add(mojeSlanjeZahteva)
+        bar.add(glavniMeni)
+        httpMeni.addActionListener{
+            httpKomunikacijaPanel = HttpKomunikacijaPanel()
+            this.contentPane = httpKomunikacijaPanel
+            osveziteFormu()
+        }
+        wsMeni.addActionListener{
+            wsPanel = WSPanel()
+            this.contentPane = wsPanel
 
-            override fun mouseReleased(e: MouseEvent?) {
-            }
+            osveziteFormu()
+        }
+        mojeSlanjeZahteva.addActionListener{
+            this.contentPane = MojeSlanjeZahtevaPanel()
+            osveziteFormu()
+        }
+        this.jMenuBar = bar
 
-            override fun mouseEntered(e: MouseEvent?) {
-            }
-
-            override fun mouseExited(e: MouseEvent?) {
-            }
-
-        })
+    }
+    fun osveziteFormu(){
+        this.revalidate()
+        this.repaint()
     }
 
     fun dodajteUFormu(k: KomunikacijaPodaci) {
-        GlobalScope.launch(Dispatchers.Default) {
-
-            modelTabele.dodajte(k)
-            osvezavanjeTabele()
-
-        }
+        httpKomunikacijaPanel.dodajteUFormu(k)
     }
 
-    fun osvezavanjeTabele() {
-        tabela.model = modelTabele
-        modelTabele.fireTableDataChanged()
+
+
+    fun pretraga(zaPretragu: PrenosInformacijaZaPretragu) {
+        httpKomunikacijaPanel.pretraga(zaPretragu)
 
     }
 
-    suspend fun pretraga(zaPretragu: PrenosInformacijaZaPretragu) {
-
-
-        GlobalScope.launch(Dispatchers.Default) {
-
-            modelTabele.pretraga(zaPretragu)
-
-                osvezavanjeTabele()
-
-        }
-
+    suspend fun dodajteUFormuWebSoket(wsPoruka:WebSoketPoruka){
+        wsPanel.dodajteUFormu(wsPoruka)
     }
 
 

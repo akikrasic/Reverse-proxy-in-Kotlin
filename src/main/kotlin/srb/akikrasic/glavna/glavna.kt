@@ -140,9 +140,9 @@ suspend fun ucitavanjeIUpisivanjeZahtevOdgovor(
                     
                     """)
                 GlobalScope.launch(mojDispecer) {
-                    nastavakWebSocket(serverInput, browserOutput, url, "server")
+                    nastavakWebSocket(serverInput, browserOutput, url, false)
                 }
-                GlobalScope.launch (mojDispecer){ nastavakWebSocket(browserInput, serverOutput, url, "klijent")  }
+                GlobalScope.launch (mojDispecer){ nastavakWebSocket(browserInput, serverOutput, url, true)  }
                 break
             }
             put++
@@ -152,9 +152,9 @@ suspend fun ucitavanjeIUpisivanjeZahtevOdgovor(
 
 }
 
-suspend fun nastavakWebSocket(ulaz:InputStream, izlaz:OutputStream, url:String, koSalje:String ){
+suspend fun nastavakWebSocket(ulaz:InputStream, izlaz:OutputStream, url:String, saljeKlijent:Boolean ){
 
-        UcitavanjeWebSocketa(ulaz, izlaz, url, koSalje).ucitajteWebSocketPorukuIPrepisite();
+        UcitavanjeWebSocketa(ulaz, izlaz, url, saljeKlijent).ucitajteWebSocketPorukuIPrepisite();
 
 }
 suspend fun ucitavanjeIUpisivanjeOdgovorSaServeraPaZahtev(
