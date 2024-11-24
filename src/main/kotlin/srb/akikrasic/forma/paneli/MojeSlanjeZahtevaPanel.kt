@@ -76,31 +76,9 @@ class MojeSlanjeZahtevaPanel(val zahtev: Zahtev = Zahtev()) : JPanel(){
             posaljite()
         }
         tabelaHederi.model = modelTabeleHederi
-        tabelaHederi.addMouseListener(object:MouseListener{
-            override fun mouseClicked(e: MouseEvent?) {
 
-            }
-
-            override fun mousePressed(e: MouseEvent?) {
-                
-            }
-
-            override fun mouseReleased(e: MouseEvent?) {
-
-            }
-
-            override fun mouseEntered(e: MouseEvent?) {
-
-            }
-
-            override fun mouseExited(e: MouseEvent?) {
-
-            }
-
-        })
         tabelaHederi.addKeyListener( object: KeyListener {
             override fun keyTyped(e: KeyEvent?) {
-                println("radi")
                 println(tabelaHederi.selectedRow)
             }
 
