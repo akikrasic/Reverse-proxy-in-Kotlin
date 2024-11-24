@@ -14,4 +14,6 @@ class ModelTabeleWebSocketPoruke(val lista:List<WebSoketPoruka>) : AbstractTable
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any  =if (columnIndex==0){
         if(lista[rowIndex].klijent){"Клијент"}else{"Сервер"}}else{ lista[rowIndex].poruka}
 
+    override fun getColumnName(column: Int): String  = ModelTabeleNaziviKolona.naziviKolonaWebSocketPoruka[column]
+
 }
