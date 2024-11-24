@@ -3,6 +3,7 @@ package srb.akikrasic.forma.paneli
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import srb.akikrasic.forma.Forma
 import srb.akikrasic.forma.modelitabele.ModelTabele
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import srb.akikrasic.korisno.GuiKorisno
@@ -13,7 +14,7 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.*
 
-class HttpKomunikacijaPanel() : JPanel() {
+class HttpKomunikacijaPanel(val forma: Forma) : JPanel() {
     val unosTeksta = UnosTekstaZaPretraguPanel(this)
     val tabela = JTable()
     val areaZahtev = JTextArea()
@@ -49,29 +50,47 @@ class HttpKomunikacijaPanel() : JPanel() {
         c.weightx = 0.5
         c.fill = GridBagConstraints.BOTH
         this.add(tabbedPane, c)
-
+        val popupMeni = JPopupMenu()
+        val menuItemPosaljite = JMenuItem("Пошаљите")
+        popupMeni.add(menuItemPosaljite)
+        tabela.componentPopupMenu = popupMeni
         tabela.addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent?) {
+
                 if (e!!.clickCount == 2) {
                     val red = tabela.selectedRow
                     areaZahtev.text = modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
                     areaOdgovor.text = modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
                 }
+
             }
 
             override fun mousePressed(e: MouseEvent?) {
             }
 
             override fun mouseReleased(e: MouseEvent?) {
+                if(e!!.isPopupTrigger){
+                    popupMeni.show(tabela, e.x, e.y)
+                }
             }
 
             override fun mouseEntered(e: MouseEvent?) {
             }
 
+
             override fun mouseExited(e: MouseEvent?) {
             }
 
         })
+
+        menuItemPosaljite.addActionListener{
+            posaljiteUMojeSlanjeZahteva()
+        }
+    }
+
+    fun posaljiteUMojeSlanjeZahteva(){
+        val komunikacijaPodaci = modelTabele.radSaListomUModeluTabele.listaZaPrikaz[tabela.selectedRow]
+        forma.ucitajteZahtevUMojeSlanjeZahtevaPanel(komunikacijaPodaci.host, komunikacijaPodaci.zahtev)
     }
 
     fun dodajteUFormu(k: KomunikacijaPodaci) {

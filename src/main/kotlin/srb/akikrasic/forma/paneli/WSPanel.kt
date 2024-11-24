@@ -123,8 +123,9 @@ class WSPanel : JPanel() {
                 tabelaPoruka.model =
                     ModelTabeleWebSocketPoruke(Podaci.mapaSvihUrlovaZaWebSoket[url]?.listaPoruka ?: listOf())
                 modelTabeleWebSoketPoruke.fireTableDataChanged()
-
-                tabelaPoruka.setRowSelectionInterval(selektovani, selektovani)
+                if( selektovani>-1) {
+                    tabelaPoruka.setRowSelectionInterval(selektovani, selektovani)
+                }
             }
         }
 

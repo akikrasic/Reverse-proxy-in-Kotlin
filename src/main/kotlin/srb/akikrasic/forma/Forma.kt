@@ -11,13 +11,14 @@ import srb.akikrasic.forma.paneli.WSPanel
 import srb.akikrasic.komunikacija.Komunikacija
 import srb.akikrasic.komunikacija.KomunikacijaPodaci
 import srb.akikrasic.ucitavanjeWebSocketa.WebSoketPoruka
+import srb.akikrasic.ucitavanjezahtevaiodgovora.Zahtev
 import java.awt.GridBagLayout
 import java.util.concurrent.Executors
 import javax.swing.*
 
 class Forma : JFrame() {
 
-    var httpKomunikacijaPanel = HttpKomunikacijaPanel()
+    var httpKomunikacijaPanel = HttpKomunikacijaPanel(this)
 
     var wsPanel = WSPanel()
 
@@ -54,7 +55,7 @@ class Forma : JFrame() {
         glavniMeni.add(mojeSlanjeZahteva)
         bar.add(glavniMeni)
         httpMeni.addActionListener{
-            httpKomunikacijaPanel = HttpKomunikacijaPanel()
+            httpKomunikacijaPanel = HttpKomunikacijaPanel(this)
             this.contentPane = httpKomunikacijaPanel
             osveziteFormu()
         }
@@ -81,7 +82,6 @@ class Forma : JFrame() {
     }
 
 
-
     fun pretraga(zaPretragu: PrenosInformacijaZaPretragu) {
         httpKomunikacijaPanel.pretraga(zaPretragu)
 
@@ -90,6 +90,12 @@ class Forma : JFrame() {
     suspend fun dodajteUFormuWebSoket(wsPoruka:WebSoketPoruka){
         wsPanel.dodajteUFormu(wsPoruka)
     }
+
+    fun ucitajteZahtevUMojeSlanjeZahtevaPanel(host:String, zahtev:Zahtev){
+        this.contentPane = MojeSlanjeZahtevaPanel(host, zahtev)
+        osveziteFormu()
+    }
+
 
 
 }
