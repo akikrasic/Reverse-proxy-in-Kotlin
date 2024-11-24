@@ -53,7 +53,7 @@ class HttpKomunikacijaPanel(val forma: Forma) : JPanel() {
         val popupMeni = JPopupMenu()
         val menuItemPosaljite = JMenuItem("Пошаљите")
         popupMeni.add(menuItemPosaljite)
-
+        tabela.componentPopupMenu = popupMeni
         tabela.addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent?) {
 
@@ -62,22 +62,21 @@ class HttpKomunikacijaPanel(val forma: Forma) : JPanel() {
                     areaZahtev.text = modelTabele.napraviteStringZaPrikazUTextAreiZahtev(red)
                     areaOdgovor.text = modelTabele.napraviteStringZaPrikazUTextAreiOdgovor(red)
                 }
-                else{
-                    if(e.isPopupTrigger){
-                        popupMeni.show(tabela, e.x, e.y)
-                    }
-                }
+
             }
 
             override fun mousePressed(e: MouseEvent?) {
             }
 
             override fun mouseReleased(e: MouseEvent?) {
-
+                if(e!!.isPopupTrigger){
+                    popupMeni.show(tabela, e.x, e.y)
+                }
             }
 
             override fun mouseEntered(e: MouseEvent?) {
             }
+
 
             override fun mouseExited(e: MouseEvent?) {
             }
@@ -90,7 +89,8 @@ class HttpKomunikacijaPanel(val forma: Forma) : JPanel() {
     }
 
     fun posaljiteUMojeSlanjeZahteva(){
-
+        val komunikacijaPodaci = modelTabele.radSaListomUModeluTabele.listaZaPrikaz[tabela.selectedRow]
+        forma.ucitajteZahtevUMojeSlanjeZahtevaPanel(komunikacijaPodaci.host, komunikacijaPodaci.zahtev)
     }
 
     fun dodajteUFormu(k: KomunikacijaPodaci) {

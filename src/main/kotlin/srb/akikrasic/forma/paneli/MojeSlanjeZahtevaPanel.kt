@@ -20,7 +20,7 @@ import javax.swing.*
 
 
 
-class MojeSlanjeZahtevaPanel(val zahtev: Zahtev = Zahtev()) : JPanel(){
+class MojeSlanjeZahtevaPanel(val host:String = "", val zahtev: Zahtev = Zahtev()) : JPanel(){
 
 
     val metodaKombo = JComboBox<String>()
@@ -34,6 +34,8 @@ class MojeSlanjeZahtevaPanel(val zahtev: Zahtev = Zahtev()) : JPanel(){
 
     val mapaBilderi = mutableMapOf<String, ()->HttpRequest.Builder> ("GET" to this::get, "POST" to this::post,
         "PUT" to this::put, "DELETE" to this::delete)
+
+    val zabranjeniHederi = setOf("Host", "Content-Length", "Connection", "")
 
     fun get(): HttpRequest.Builder = HttpRequest.newBuilder().GET()
     fun post(): HttpRequest.Builder = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(zahtevTeloArea.text.trim()))
@@ -91,12 +93,12 @@ class MojeSlanjeZahtevaPanel(val zahtev: Zahtev = Zahtev()) : JPanel(){
             }
 
         })
+        urlPolje.text = "https://"
         if( zahtev.url !=""){
-            urlPolje.text = zahtev.url
+            urlPolje.text += host+zahtev.url
         }
-        else{
-            urlPolje.text = "https://"
-        }
+
+        metodaKombo.selectedItem = zahtev.metoda
         modelTabeleHederi.lista.clear()
         modelTabeleHederi.lista.addAll(zahtev.hederi.mapaOriginalnihHedera.map{HederIVrednost(it.key, it.value)})
         modelTabeleHederi.lista.add(HederIVrednost())
@@ -122,11 +124,26 @@ class MojeSlanjeZahtevaPanel(val zahtev: Zahtev = Zahtev()) : JPanel(){
     }
     fun posaljite(){
         val client = HttpClient.newHttpClient()
-        val request = mapaBilderi[metodaKombo.selectedItem]!!().uri(URI.create(urlPolje.text.trim())).build()
-        val resp = client.send(request, HttpResponse.BodyHandlers.ofString()).body()
-        odgovorSveArea.text = resp
+        val requestBuilder = mapaBilderi[metodaKombo.selectedItem]!!()
+            .uri(URI.create(urlPolje.text.trim()))
+        modelTabeleHederi.lista.filter{!(it.headerNaziv in zabranjeniHederi)}.forEach{
+            requestBuilder.header(it.headerNaziv, it.headerVrednost)
+        }
+
+        val response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
+        odgovorSveArea.text = obradaOdgovora(response)
 
     }
+
+    fun obradaOdgovora(response:HttpResponse<String?>) = """
+        ${response.headers().map().map { 
+            " ${it.key}: ${it.value}"
+        }.joinToString("\n")}
+        
+        ${response.body()}
+        
+        """.trimIndent()
+
 
 
 

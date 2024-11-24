@@ -91,8 +91,8 @@ class Forma : JFrame() {
         wsPanel.dodajteUFormu(wsPoruka)
     }
 
-    fun ucitajteZahtevUMojeSlanjeZahtevaPanel(zahtev:Zahtev){
-        this.contentPane = MojeSlanjeZahtevaPanel(zahtev)
+    fun ucitajteZahtevUMojeSlanjeZahtevaPanel(host:String, zahtev:Zahtev){
+        this.contentPane = MojeSlanjeZahtevaPanel(host, zahtev)
         osveziteFormu()
     }
 
